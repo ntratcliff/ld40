@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class KatamariController : MonoBehaviour
 {
+    public GameObject Ball;
+    public GameObject Player;
+
     public float RotSpeed;
     public float RotAccel;
     public float RotDampening;
@@ -19,6 +22,7 @@ public class KatamariController : MonoBehaviour
     {
         _updateRot();
         _updateVelo();
+        _updateBall();
     }
 
     private void _updateRot()
@@ -61,5 +65,13 @@ public class KatamariController : MonoBehaviour
         // dampen
         if (vert == 0)
             _velo *= MoveDampening;
+    }
+
+    private void _updateBall()
+    {
+        // rotate relative to forward velo
+        float c = Mathf.PI * Ball.transform.localScale.y; // we can use local scale because this is always 1
+        Vector3 perp = Vector3.Cross(Vector3.up, _velo); // rotate about the perpendicular axis
+        Ball.transform.Rotate(perp, _velo.magnitude * c * Time.deltaTime, Space.World);
     }
 }
