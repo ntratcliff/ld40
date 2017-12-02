@@ -27,7 +27,7 @@ public class CameraController : MonoBehaviour
     private void _updatePos()
     {
         //transform.position = Vector3.Slerp(transform.position, Target.transform.position, PosLerpSpeed * Time.deltaTime);
-        transform.position = _interpolate(transform.position, Target.transform.position, PosLerpSpeed * Time.deltaTime);
+        transform.position = MathHelper.Interpolate(transform.position, Target.transform.position, PosLerpSpeed * Time.deltaTime);
     }
 
     private float _lastTargetRot;
@@ -42,18 +42,8 @@ public class CameraController : MonoBehaviour
         }
 
         //_crane.BaseYaw = Mathf.Lerp(_crane.BaseYaw, targetRot, RotLerpSpeed * Time.deltaTime);
-        _crane.BaseYaw = _interpolate(_crane.BaseYaw, targetRot, RotLerpSpeed * Time.deltaTime);
+        _crane.BaseYaw = MathHelper.Interpolate(_crane.BaseYaw, targetRot, RotLerpSpeed * Time.deltaTime);
 
         _lastTargetRot = targetRot;
-    }
-
-    private Vector3 _interpolate(Vector3 from, Vector3 to, float t)
-    {
-        return from + (to - from) * t;
-    }
-
-    private float _interpolate(float from, float to, float t)
-    {
-        return from + (to - from) * t;
     }
 }

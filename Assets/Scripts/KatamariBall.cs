@@ -55,6 +55,7 @@ public class KatamariBall : MonoBehaviour
         {
             Destroy(collision.rigidbody);
             collision.transform.SetParent(transform);
+            collision.gameObject.layer = gameObject.layer;
 
             // add to bounds
             _bounds.Encapsulate(collision.collider.bounds);

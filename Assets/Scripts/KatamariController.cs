@@ -7,6 +7,12 @@ public class KatamariController : MonoBehaviour
     public KatamariBall Ball;
     public GameObject Player;
 
+    public LayerMask PlayerRayMask;
+    public LayerMask BallRayMask;
+    public int BallRayAccuracy = 3;
+    public float BallRayLerpSpeed;
+    public float PlayerRayLerpSpeed;
+
     public float RotSpeed;
     public float RotAccel;
     public float RotDampening;
@@ -19,6 +25,9 @@ public class KatamariController : MonoBehaviour
 
     private float _rotVelo;
     private Vector3 _velo;
+
+    private float _targetBallY;
+    private float _tergetPlayerDist;
 
     public Vector3 Velocity
     {
@@ -80,7 +89,72 @@ public class KatamariController : MonoBehaviour
         // rotate relative to forward velo
         Vector3 perp = Vector3.Cross(Vector3.up, _velo); // rotate about the perpendicular axis
         Ball.transform.Rotate(perp, _velo.magnitude * Ball.Circumference * Time.deltaTime, Space.World);
+
+        // raycast from ground to ball
+        RaycastHit minHit;
+        _ballDistCast(0, 0, out minHit);
+
+        // try some multiples of the radius as an offset, for accuracy
+        for (float x = 1f; x <= BallRayAccuracy; x++)
+        {
+            for (float z = 1f; z <= BallRayAccuracy; z++)
+            {
+                float xOff = Ball.Radius / (BallRayAccuracy / x);
+                float zOff = Ball.Radius / (BallRayAccuracy / z);
+
+                RaycastHit hit;
+                if(_ballDistCast(xOff, zOff, out hit) && hit.distance < minHit.distance)
+                    minHit = hit;
+                if(_ballDistCast(-xOff, zOff, out hit) && hit.distance < minHit.distance)
+                    minHit = hit;
+                if(_ballDistCast(-xOff, -zOff, out hit) && hit.distance < minHit.distance)
+                    minHit = hit;
+                if(_ballDistCast(xOff, -zOff, out hit) && hit.distance < minHit.distance)
+                    minHit = hit;
+            }
+        }
+
+        Debug.Log("Minhit: " + minHit);
+
+        // set ball y to dist
+        Vector3 localPos = Ball.transform.localPosition;
+        localPos.y = Ball.Radius - minHit.distance;
+        Ball.transform.localPosition = localPos;
+
+        //_targetBallY = Ball.Radius - minHit.distance;
+
+        //Debug.Log("TargetY: " + _targetBallY);
+
+        // lerp to target y
+        // TODO: get this working
+        //Vector3 localPos = Ball.transform.localPosition;
+        //localPos.y = MathHelper.Interpolate(Ball.transform.localPosition.y, _targetBallY, BallRayLerpSpeed * Time.deltaTime);
+        //Ball.transform.localPosition = localPos;
     }
+
+    private bool _ballDistCast(float xOff, float zOff, out RaycastHit hit)
+    {
+        // raycast up from radius to ball
+        Vector3 pos = Ball.transform.position;
+        pos.y -= Ball.Radius;
+        pos.x += xOff;
+        pos.z += zOff;
+
+        Vector3 target = Ball.transform.position;
+        target.x += xOff;
+        target.z += zOff;
+
+        Vector3 dir = target - pos;
+        Debug.DrawRay(pos, dir, Color.cyan);
+
+        if(Physics.Raycast(pos, dir, out hit, 100, BallRayMask))
+        {
+            Debug.DrawLine(pos, hit.point, Color.yellow);
+            return true;
+        }
+
+        return false;
+   }
 
     private void _updatePlayer()
     {
@@ -112,7 +186,7 @@ public class KatamariController : MonoBehaviour
         Debug.DrawRay(pos + Vector3.up, Vector3.down, Color.red);
 
         RaycastHit hit;
-        if(Physics.Raycast(pos, direction, out hit))
+        if(Physics.Raycast(pos, direction, out hit, 100, PlayerRayMask))
         {
             Debug.DrawLine(pos, hit.point, Color.yellow);
         }
