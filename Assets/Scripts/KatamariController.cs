@@ -18,6 +18,11 @@ public class KatamariController : MonoBehaviour
     private float _rotVelo;
     private Vector3 _velo;
 
+    public Vector3 Velocity
+    {
+        get { return _velo; }
+    }
+
     private void Update()
     {
         _updateRot();
