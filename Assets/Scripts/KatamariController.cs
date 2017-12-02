@@ -12,8 +12,8 @@ public class KatamariController : MonoBehaviour
     public float MoveAccel;
     public float MoveDampening;
 
-    public float _rotVelo;
-    public Vector3 _velo;
+    private float _rotVelo;
+    private Vector3 _velo;
 
     private void Update()
     {

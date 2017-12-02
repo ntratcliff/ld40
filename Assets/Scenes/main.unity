@@ -409,7 +409,7 @@ MonoBehaviour:
   RotDampening: 0.8
   MoveSpeed: 12
   MoveAccel: 30
-  MoveDampening: 0.9
+  MoveDampening: 0.95
   _rotVelo: 0.8
   _velo: {x: 0, y: 0, z: 0}
 --- !u!1 &1163370629
