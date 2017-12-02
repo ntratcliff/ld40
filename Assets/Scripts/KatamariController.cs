@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class KatamariController : MonoBehaviour
 {
-    public GameObject Ball;
+    public KatamariBall Ball;
     public GameObject Player;
 
     public float RotSpeed;
@@ -14,6 +14,8 @@ public class KatamariController : MonoBehaviour
     public float MoveSpeed;
     public float MoveAccel;
     public float MoveDampening;
+
+    public float PlayerZOffset = -0.5f;
 
     private float _rotVelo;
     private Vector3 _velo;
@@ -28,6 +30,7 @@ public class KatamariController : MonoBehaviour
         _updateRot();
         _updateVelo();
         _updateBall();
+        _updatePlayer();
     }
 
     private void _updateRot()
@@ -75,8 +78,45 @@ public class KatamariController : MonoBehaviour
     private void _updateBall()
     {
         // rotate relative to forward velo
-        float c = Mathf.PI * Ball.transform.localScale.y; // we can use local scale because this is always 1
         Vector3 perp = Vector3.Cross(Vector3.up, _velo); // rotate about the perpendicular axis
-        Ball.transform.Rotate(perp, _velo.magnitude * c * Time.deltaTime, Space.World);
+        Ball.transform.Rotate(perp, _velo.magnitude * Ball.Circumference * Time.deltaTime, Space.World);
+    }
+
+    private void _updatePlayer()
+    {
+        RaycastHit bottomCast = _playerDistCast(0);
+        RaycastHit midCast = _playerDistCast(1f);
+        RaycastHit topCast = _playerDistCast(2f);
+
+        RaycastHit smallestHit = topCast;
+        if (midCast.distance != 0 && midCast.distance < smallestHit.distance)
+            smallestHit = midCast;
+        if (bottomCast.distance != 0 && bottomCast.distance < smallestHit.distance)
+            smallestHit = bottomCast;
+
+        Vector3 worldPos = smallestHit.point;
+        worldPos.y = Player.transform.position.y;
+        worldPos -= transform.forward * PlayerZOffset;
+        Player.transform.position = worldPos;
+    }
+
+    private RaycastHit _playerDistCast(float y)
+    {
+        Vector3 pos = Ball.transform.position - transform.forward * (Ball.Radius + 1f);
+        pos.y = y;
+        Vector3 ball = Ball.transform.position;
+        ball.y = y;
+
+        Vector3 direction = ball - pos;
+        Debug.DrawRay(pos, direction, Color.cyan);
+        Debug.DrawRay(pos + Vector3.up, Vector3.down, Color.red);
+
+        RaycastHit hit;
+        if(Physics.Raycast(pos, direction, out hit))
+        {
+            Debug.DrawLine(pos, hit.point, Color.yellow);
+        }
+
+        return hit;
     }
 }
