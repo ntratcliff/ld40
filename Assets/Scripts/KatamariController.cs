@@ -27,7 +27,7 @@ public class KatamariController : MonoBehaviour
     private Vector3 _velo;
 
     private float _targetBallY;
-    private float _tergetPlayerDist;
+    private Vector3 _targetPlayerPos;
 
     public Vector3 Velocity
     {
@@ -103,13 +103,13 @@ public class KatamariController : MonoBehaviour
                 float zOff = Ball.Radius / (BallRayAccuracy / z);
 
                 RaycastHit hit;
-                if(_ballDistCast(xOff, zOff, out hit) && hit.distance < minHit.distance)
+                if (_ballDistCast(xOff, zOff, out hit) && hit.distance < minHit.distance)
                     minHit = hit;
-                if(_ballDistCast(-xOff, zOff, out hit) && hit.distance < minHit.distance)
+                if (_ballDistCast(-xOff, zOff, out hit) && hit.distance < minHit.distance)
                     minHit = hit;
-                if(_ballDistCast(-xOff, -zOff, out hit) && hit.distance < minHit.distance)
+                if (_ballDistCast(-xOff, -zOff, out hit) && hit.distance < minHit.distance)
                     minHit = hit;
-                if(_ballDistCast(xOff, -zOff, out hit) && hit.distance < minHit.distance)
+                if (_ballDistCast(xOff, -zOff, out hit) && hit.distance < minHit.distance)
                     minHit = hit;
             }
         }
@@ -147,34 +147,42 @@ public class KatamariController : MonoBehaviour
         Vector3 dir = target - pos;
         Debug.DrawRay(pos, dir, Color.cyan);
 
-        if(Physics.Raycast(pos, dir, out hit, 100, BallRayMask))
+        if (Physics.Raycast(pos, dir, out hit, 100, BallRayMask))
         {
             Debug.DrawLine(pos, hit.point, Color.yellow);
             return true;
         }
 
         return false;
-   }
+    }
 
     private void _updatePlayer()
     {
-        RaycastHit bottomCast = _playerDistCast(0);
-        RaycastHit midCast = _playerDistCast(1f);
-        RaycastHit topCast = _playerDistCast(2f);
+        RaycastHit bottomCast;
+        RaycastHit midCast;
 
-        RaycastHit smallestHit = topCast;
-        if (midCast.distance != 0 && midCast.distance < smallestHit.distance)
+        RaycastHit smallestHit;
+        _playerDistCast(2f, out smallestHit);
+
+        if (_playerDistCast(1f, out midCast)
+            && midCast.distance < smallestHit.distance)
             smallestHit = midCast;
-        if (bottomCast.distance != 0 && bottomCast.distance < smallestHit.distance)
+
+        if (_playerDistCast(0f, out bottomCast)
+            && bottomCast.distance < smallestHit.distance)
             smallestHit = bottomCast;
 
-        Vector3 worldPos = smallestHit.point;
+        Vector3 worldPos = smallestHit.distance != 0 ? smallestHit.point : transform.position - transform.forward * Ball.Radius;
         worldPos.y = Player.transform.position.y;
         worldPos -= transform.forward * PlayerZOffset;
-        Player.transform.position = worldPos;
+        _targetPlayerPos = worldPos;
+
+        Vector3 pos = Player.transform.position;
+        pos = MathHelper.Interpolate(pos, _targetPlayerPos, PlayerRayLerpSpeed * Time.deltaTime);
+        Player.transform.position = pos;
     }
 
-    private RaycastHit _playerDistCast(float y)
+    private bool _playerDistCast(float y, out RaycastHit hit)
     {
         Vector3 pos = Ball.transform.position - transform.forward * (Ball.Radius + 1f);
         pos.y = y;
@@ -185,12 +193,12 @@ public class KatamariController : MonoBehaviour
         Debug.DrawRay(pos, direction, Color.cyan);
         Debug.DrawRay(pos + Vector3.up, Vector3.down, Color.red);
 
-        RaycastHit hit;
-        if(Physics.Raycast(pos, direction, out hit, 100, PlayerRayMask))
+        if (Physics.Raycast(pos, direction, out hit, 100, PlayerRayMask))
         {
             Debug.DrawLine(pos, hit.point, Color.yellow);
+            return true;
         }
 
-        return hit;
+        return false;
     }
 }
