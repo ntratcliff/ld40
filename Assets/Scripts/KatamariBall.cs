@@ -32,7 +32,7 @@ public class KatamariBall : MonoBehaviour
     private void Update()
     {
         _bounds.center = transform.position;
-        _updatePos();
+        //_updatePos(); // handled in KatamariController.cs
     }
 
     private void _updatePos()
