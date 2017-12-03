@@ -845,7 +845,7 @@ SphereCollider:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 779078445}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: fc6c7f6afa0a37749864c0088c9e9159, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -2055,7 +2055,7 @@ Transform:
   m_GameObject: {fileID: 1460101016}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 2.34, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalScale: {x: 2.8670793, y: 2.8670788, z: 2.8670788}
   m_Children:
   - {fileID: 779078449}
   m_Father: {fileID: 1104595805}
