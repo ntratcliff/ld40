@@ -10,6 +10,7 @@ public class SizeMeter : MonoBehaviour
     public Image GoalImage;
     public Image CurrentImage;
     public Text SizeText;
+    public Text GoalText;
     public float MeterLerpSpeed;
 
     public KatamariBall Ball;
@@ -20,6 +21,7 @@ public class SizeMeter : MonoBehaviour
     private Vector2 _meterStartSize;
     private Vector2 _meterTargetSize;
     private string _sizeTextFormat;
+    private string _goalTextFormat;
 
     private float _ballSize;
     private float _startSize;
@@ -50,6 +52,9 @@ public class SizeMeter : MonoBehaviour
         // get original size text for formatting later
         _sizeTextFormat = SizeText.text;
 
+        // get original goal text for later
+        _goalTextFormat = GoalText.text;
+
         // register event listener
         Ball.OnPickup.AddListener(OnPickup);
 
@@ -64,6 +69,7 @@ public class SizeMeter : MonoBehaviour
     {
         Goal = goal;
         _startSize = Ball.Diameter;
+        _updateGoalText();
     }
 
     private void Update()
@@ -86,24 +92,31 @@ public class SizeMeter : MonoBehaviour
         if (_progress >= 1f && OnGoalReached != null)
             OnGoalReached.Invoke();
 
-        _updateText();
+        _updateSizeText();
         _updateMeter();
     }
 
-    private void _updateText()
+    private void _updateSizeText()
     {
-        Debug.Log("m: " + _ballSize);
-        Debug.Log("cm: " + _sizeCm);
-        Debug.Log("mm: " + _sizeMm);
         // break size into m, cm, and mm
         float m = Mathf.FloorToInt(_ballSize);
         float cm = Mathf.FloorToInt(_sizeCm % 100);
         float mm = Mathf.FloorToInt(_sizeMm % 100 % 10);
+
         SizeText.text = string.Format(_sizeTextFormat, m, cm, mm);
+    }
+
+    private void _updateGoalText()
+    {
+        GoalText.text = string.Format(_goalTextFormat, Goal);
     }
 
     private void _updateMeter()
     {
         _meterTargetSize = MathHelper.Interpolate(_meterStartSize, _goalSize, _progress);
+        if(_meterTargetSize.sqrMagnitude > _goalSize.sqrMagnitude)
+        {
+            _meterTargetSize = _goalSize;
+        }
     }
 }
