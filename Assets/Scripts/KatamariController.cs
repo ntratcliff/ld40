@@ -8,38 +8,31 @@ public class KatamariController : MonoBehaviour
     public GameObject Player;
 
     public LayerMask PlayerRayMask;
-    public LayerMask BallRayMask;
-    public int BallRayAccuracy = 3;
-    public float BallRayLerpSpeed;
     public float PlayerRayLerpSpeed;
 
     public float RotSpeed;
     public float RotAccel;
     public float RotDampening;
 
-    public float MoveSpeed;
     public float MoveAccel;
-    public float MoveDampening;
 
     public float PlayerZOffset = -0.5f;
 
     private float _rotVelo;
-    private Vector3 _velo;
 
-    private float _targetBallY;
     private Vector3 _targetPlayerPos;
-
-    public Vector3 Velocity
-    {
-        get { return _velo; }
-    }
 
     private void Update()
     {
         _updateRot();
         _updateVelo();
-        _updateBall();
         _updatePlayer();
+
+        // go to ball pos
+        Vector3 pos = transform.position;
+        pos = Ball.transform.position;
+        pos.y = transform.position.y;
+        transform.position = pos;
     }
 
     private void _updateRot()
@@ -70,88 +63,14 @@ public class KatamariController : MonoBehaviour
         // calculate accel
         float accel = vert * MoveAccel;
 
-        // apply to velo
-        _velo += transform.forward * accel * Time.deltaTime;
-
-        // clamp velo
-        _velo = Vector3.ClampMagnitude(_velo, MoveSpeed);
-
-        // apply
-        transform.position += _velo * Time.deltaTime;
+        // apply to ball velo
+        Ball.ApplyVelo(transform.forward * accel);
 
         // dampen
         if (vert == 0)
-            _velo *= MoveDampening;
+            Ball.DampenVelo();
     }
 
-    private void _updateBall()
-    {
-        // rotate relative to forward velo
-        Vector3 perp = Vector3.Cross(Vector3.up, _velo); // rotate about the perpendicular axis
-        Ball.transform.Rotate(perp, _velo.magnitude * Ball.Circumference * Time.deltaTime, Space.World);
-
-
-        //// raycast from ground to ball
-        //RaycastHit minHit;
-        //_ballDistCast(0, 0, out minHit);
-
-        //// try some multiples of the radius as an offset, for accuracy
-        //for (float x = 1f; x <= BallRayAccuracy; x++)
-        //{
-        //    for (float z = 1f; z <= BallRayAccuracy; z++)
-        //    {
-        //        float xOff = Ball.Radius / (BallRayAccuracy / x);
-        //        float zOff = Ball.Radius / (BallRayAccuracy / z);
-
-        //        RaycastHit hit;
-        //        if (_ballDistCast(xOff, zOff, out hit) && hit.distance < minHit.distance)
-        //            minHit = hit;
-        //        if (_ballDistCast(-xOff, zOff, out hit) && hit.distance < minHit.distance)
-        //            minHit = hit;
-        //        if (_ballDistCast(-xOff, -zOff, out hit) && hit.distance < minHit.distance)
-        //            minHit = hit;
-        //        if (_ballDistCast(xOff, -zOff, out hit) && hit.distance < minHit.distance)
-        //            minHit = hit;
-        //    }
-        //}
-
-        //// set ball y to dist
-        ////Vector3 localPos = Ball.transform.localPosition;
-        ////localPos.y = Ball.Radius - minHit.distance;
-        ////Ball.transform.localPosition = localPos;
-
-        //_targetBallY = Ball.Radius - minHit.distance;
-
-        ////lerp to target y
-        // //TODO: get this working
-        //Vector3 localPos = Ball.transform.localPosition;
-        //localPos.y = MathHelper.Interpolate(Ball.transform.localPosition.y, _targetBallY, BallRayLerpSpeed * Time.deltaTime);
-        //Ball.transform.localPosition = localPos;
-    }
-
-    private bool _ballDistCast(float xOff, float zOff, out RaycastHit hit)
-    {
-        // raycast up from radius to ball
-        Vector3 pos = Ball.transform.position;
-        pos.y -= Ball.Radius;
-        pos.x += xOff;
-        pos.z += zOff;
-
-        Vector3 target = Ball.transform.position;
-        target.x += xOff;
-        target.z += zOff;
-
-        Vector3 dir = target - pos;
-        Debug.DrawRay(pos, dir, Color.cyan);
-
-        if (Physics.Raycast(pos, dir, out hit, 100, BallRayMask))
-        {
-            Debug.DrawLine(pos, hit.point, Color.yellow);
-            return true;
-        }
-
-        return false;
-    }
 
     private void _updatePlayer()
     {

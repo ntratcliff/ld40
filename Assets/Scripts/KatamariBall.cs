@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class KatamariBall : MonoBehaviour 
 {
+    public float MaxSpeed;
+    public float Dampening;
     public GameObject BallMesh;
     public AudioSource SFXSource;
     public AudioClip[] PickupClips;
@@ -25,6 +27,24 @@ public class KatamariBall : MonoBehaviour
     public float Diameter { get { return Radius * 2f; } }
     public float Circumference {  get { return Mathf.PI * Diameter; } }
 
+    private Vector3 _velo;
+    public Vector3 Velocity
+    {
+        get { return _velo; }
+    }
+
+    public void ApplyVelo(Vector3 v)
+    {
+        _velo += v * Time.deltaTime;
+        _velo = Vector3.ClampMagnitude(_velo, MaxSpeed);
+        Debug.Log("Speed: " + _velo.magnitude);
+    }
+
+    public void DampenVelo()
+    {
+        _velo *= Dampening;
+    }
+
     private void Start()
     {
         _bounds = BallMesh.GetComponent<MeshRenderer>().bounds;
@@ -33,16 +53,18 @@ public class KatamariBall : MonoBehaviour
 
     private void Update()
     {
-        _bounds.center = transform.position;
-        //_updatePos(); // handled in KatamariController.cs
+        _bounds.center = transform.position + _velo * Time.deltaTime;
+        _updatePos(); // handled in KatamariController.cs
         //BallMesh.transform.localScale = (Radius * 0.7f) * Vector3.one;
     }
 
     private void _updatePos()
     {
-        Vector3 pos = transform.localPosition;
-        pos.y = Radius;
-        transform.localPosition = pos;
+        transform.position += _velo * Time.deltaTime;
+
+        // rotate relative to forward velo
+        Vector3 perp = Vector3.Cross(Vector3.up, _velo); // rotate about the perpendicular axis
+        transform.Rotate(perp, _velo.magnitude * Circumference * Time.deltaTime, Space.World);
     }
 
     private void OnDrawGizmos()
