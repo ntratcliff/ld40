@@ -15,9 +15,9 @@ public class KatamariBall : MonoBehaviour
         get
         {
             float max = _bounds.extents.x;
-            if (_bounds.extents.y > max)
+            if (_bounds.extents.y < max)
                 max = _bounds.extents.y;
-            if (_bounds.extents.z > max)
+            if (_bounds.extents.z < max)
                 max = _bounds.extents.z;
             return max;
         }
@@ -35,6 +35,7 @@ public class KatamariBall : MonoBehaviour
     {
         _bounds.center = transform.position;
         //_updatePos(); // handled in KatamariController.cs
+        //BallMesh.transform.localScale = (Radius * 0.7f) * Vector3.one;
     }
 
     private void _updatePos()
@@ -53,7 +54,7 @@ public class KatamariBall : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         // pickup things on collision
-        if(collision.transform.tag == "Pickup")
+        if(collision.transform.tag == "Pickup" && Bounds.Intersects(collision.collider.bounds))
         {
             Destroy(collision.rigidbody);
             collision.transform.SetParent(transform);
