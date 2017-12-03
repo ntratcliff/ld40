@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class KatamariBall : MonoBehaviour 
 {
@@ -9,6 +10,8 @@ public class KatamariBall : MonoBehaviour
     public GameObject BallMesh;
     public AudioSource SFXSource;
     public AudioClip[] PickupClips;
+
+    public UnityEvent OnPickup;
 
     private Bounds _bounds;
     public Bounds Bounds { get { return _bounds; } }
@@ -53,7 +56,7 @@ public class KatamariBall : MonoBehaviour
     private void Update()
     {
         _bounds.center = transform.position + _velo * Time.deltaTime;
-        _updatePos(); // handled in KatamariController.cs
+        _updatePos();
         //BallMesh.transform.localScale = (Radius * 0.7f) * Vector3.one;
     }
 
@@ -87,6 +90,8 @@ public class KatamariBall : MonoBehaviour
 
             // play sound
             _playRandomPickupClip();
+
+            OnPickup.Invoke();
         }
     }
 

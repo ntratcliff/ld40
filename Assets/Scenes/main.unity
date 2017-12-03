@@ -8824,6 +8824,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 809c2dddb20bb174fb19b165c85d01ab, type: 3}
   - {fileID: 8300000, guid: af58b54db88857e4185e3fe7bd92b21c, type: 3}
   - {fileID: 8300000, guid: 51bcba279cd7ef24b8d14c33ce0b129c, type: 3}
+  OnPickup:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!82 &1460101020
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9474,11 +9479,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed605c6629d0b4c4dbaef9be28b663ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Goal: 0
+  Goal: 5
   GoalImage: {fileID: 1610829184}
   CurrentImage: {fileID: 1546366937}
   SizeText: {fileID: 1758302427}
+  MeterLerpSpeed: 0.6
   Ball: {fileID: 1460101019}
+  OnGoalReached:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
+      PublicKeyToken=null
 --- !u!4 &1536170145 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4241325095604530, guid: 125879cf68872c244878f545761a3c9e,
@@ -9509,7 +9520,7 @@ RectTransform:
   m_GameObject: {fileID: 1546366935}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 1}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_Children: []
   m_Father: {fileID: 1523632825}
   m_RootOrder: 1

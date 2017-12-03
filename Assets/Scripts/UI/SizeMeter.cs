@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class SizeMeter : MonoBehaviour
@@ -9,14 +10,19 @@ public class SizeMeter : MonoBehaviour
     public Image GoalImage;
     public Image CurrentImage;
     public Text SizeText;
+    public float MeterLerpSpeed;
 
     public KatamariBall Ball;
 
+    public UnityEvent OnGoalReached;
+
     private Vector2 _goalSize;
     private Vector2 _meterStartSize;
+    private Vector2 _meterTargetSize;
     private string _sizeTextFormat;
 
     private float _ballSize;
+    private float _startSize;
     private float _sizeMm // size in mm
     {
         get { return _ballSize * 1000f; }
@@ -24,6 +30,12 @@ public class SizeMeter : MonoBehaviour
     private float _sizeCm // size in cm
     {
         get { return _ballSize * 100f; }
+    }
+
+    private float _progress;
+    public float Progress
+    {
+        get { return _progress; }
     }
 
     // Use this for initialization
@@ -37,13 +49,42 @@ public class SizeMeter : MonoBehaviour
 
         // get original size text for formatting later
         _sizeTextFormat = SizeText.text;
+
+        // register event listener
+        Ball.OnPickup.AddListener(OnPickup);
+
+        // set initial goal
+        SetGoal(Goal);
+
+        // call OnPickup to init
+        OnPickup();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetGoal(float goal)
+    {
+        Goal = goal;
+        _startSize = Ball.Diameter;
+    }
+
+    private void Update()
+    {
+        // update meter size
+        CurrentImage.rectTransform.localScale = MathHelper.Interpolate(
+            CurrentImage.rectTransform.localScale,
+            _meterTargetSize,
+            MeterLerpSpeed * Time.deltaTime);
+    }
+
+    // called when the ball collects something
+    public void OnPickup()
     {
         // update ball size
         _ballSize = Ball.Diameter;
+
+        // calculate progress towards goal
+        _progress = (_ballSize - _startSize) / (Goal - _startSize);
+        if (_progress >= 1f && OnGoalReached != null)
+            OnGoalReached.Invoke();
 
         _updateText();
         _updateMeter();
@@ -63,6 +104,6 @@ public class SizeMeter : MonoBehaviour
 
     private void _updateMeter()
     {
-
+        _meterTargetSize = MathHelper.Interpolate(_meterStartSize, _goalSize, _progress);
     }
 }
