@@ -5,6 +5,8 @@ using UnityEngine;
 public class KatamariBall : MonoBehaviour 
 {
     public GameObject BallMesh;
+    public AudioSource SFXSource;
+    public AudioClip[] PickupClips;
 
     private Bounds _bounds;
     public Bounds Bounds { get { return _bounds; } }
@@ -60,6 +62,14 @@ public class KatamariBall : MonoBehaviour
             // add to bounds
             _bounds.Encapsulate(collision.collider.bounds);
             Debug.Log("Diameter: " + Diameter);
+
+            // play sound
+            _playRandomPickupClip();
         }
+    }
+
+    private void _playRandomPickupClip()
+    {
+        SFXSource.PlayOneShot(PickupClips[Random.Range(0, PickupClips.Length)]);
     }
 }
