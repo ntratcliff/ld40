@@ -37,6 +37,9 @@ public class KatamariBall : MonoBehaviour
         get { return _velo; }
     }
 
+    public ParticleSystem ParticleSystem; // for the blood
+    public bool EmitBlood;
+
     public void ApplyVelo(Vector3 v)
     {
         _velo += v * Time.deltaTime;
@@ -94,6 +97,26 @@ public class KatamariBall : MonoBehaviour
 
             OnPickup.Invoke();
         }
+    }
+
+    private void OnCollisionStay(Collision collision)
+    {
+        // emit blood (sorry)
+        if (collision.transform.tag == "Ground" && EmitBlood)
+        {
+            Vector3 pos = collision.contacts[0].point;
+            pos.y = collision.transform.position.y  + 0.03f;
+            _emitBloodAt(pos);
+        }
+    }
+
+    public void AllowEmitBlood() { EmitBlood = true; }
+
+    private void _emitBloodAt(Vector3 pos)
+    {
+        ParticleSystem.transform.rotation = Quaternion.Euler(0, 0, Random.Range(0, 360f));
+        ParticleSystem.transform.position = pos;
+        ParticleSystem.Emit(1);
     }
 
     private void _playRandomPickupClip()
