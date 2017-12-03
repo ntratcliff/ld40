@@ -19,12 +19,13 @@ public class KatamariBall : MonoBehaviour
     {
         get
         {
-            float max = _bounds.extents.x;
-            if (_bounds.extents.y < max)
-                max = _bounds.extents.y;
-            if (_bounds.extents.z < max)
-                max = _bounds.extents.z;
-            return max;
+            //float max = _bounds.extents.x;
+            //if (_bounds.extents.y < max)
+            //    max = _bounds.extents.y;
+            //if (_bounds.extents.z < max)
+            //    max = _bounds.extents.z;
+            //return max;
+            return _bounds.extents.magnitude / 2f;
         }
     }
     public float Diameter { get { return Radius * 2f; } }

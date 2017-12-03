@@ -39267,7 +39267,7 @@ GameObject:
   - component: {fileID: 1163370631}
   - component: {fileID: 1163370630}
   m_Layer: 10
-  m_Name: Grounds
+  m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50794,12 +50794,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed605c6629d0b4c4dbaef9be28b663ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Goal: 5
+  Goal: 8
   GoalImage: {fileID: 1610829184}
   CurrentImage: {fileID: 1546366937}
   SizeText: {fileID: 1758302427}
   GoalText: {fileID: 79910278}
-  MeterLerpSpeed: 0.6
+  MeterLerpSpeed: 0.8
   Ball: {fileID: 1460101019}
   OnGoalReached:
     m_PersistentCalls:
@@ -52072,7 +52072,12 @@ Prefab:
     - target: {fileID: 54955441159322136, guid: 125879cf68872c244878f545761a3c9e,
         type: 2}
       propertyPath: m_Constraints
-      value: 116
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 54955441159322136, guid: 125879cf68872c244878f545761a3c9e,
+        type: 2}
+      propertyPath: m_UseGravity
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 125879cf68872c244878f545761a3c9e, type: 2}
