@@ -20,9 +20,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4241325095604530}
   - component: {fileID: 33855283614489000}
-  - component: {fileID: 136182465124744944}
   - component: {fileID: 23492086521439412}
   - component: {fileID: 54955441159322136}
+  - component: {fileID: 65079771121003542}
   m_Layer: 0
   m_Name: Pickup
   m_TagString: Pickup
@@ -97,8 +97,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!136 &136182465124744944
-CapsuleCollider:
+--- !u!65 &65079771121003542
+BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -106,7 +106,6 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.4
-  m_Height: 1.8
-  m_Direction: 1
+  serializedVersion: 2
+  m_Size: {x: 0.5, y: 1.6, z: 0.5}
   m_Center: {x: 0, y: 0, z: 0}
