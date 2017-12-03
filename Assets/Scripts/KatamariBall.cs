@@ -37,7 +37,6 @@ public class KatamariBall : MonoBehaviour
     {
         _velo += v * Time.deltaTime;
         _velo = Vector3.ClampMagnitude(_velo, MaxSpeed);
-        Debug.Log("Speed: " + _velo.magnitude);
     }
 
     public void DampenVelo()
