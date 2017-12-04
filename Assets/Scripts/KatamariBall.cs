@@ -9,7 +9,10 @@ public class KatamariBall : MonoBehaviour
     public float Dampening;
     public GameObject BallMesh;
     public AudioSource SFXSource;
+    public AudioSource HitSFXSource;
     public AudioClip[] PickupClips;
+    public AudioClip HitClip;
+    public float HitPitchMin, HitPitchMax;
 
     public UnityEvent OnPickup;
 
@@ -96,6 +99,11 @@ public class KatamariBall : MonoBehaviour
             _playRandomPickupClip();
 
             OnPickup.Invoke();
+        }
+        if (collision.transform.tag == "Ground" && EmitBlood && !HitSFXSource.isPlaying)
+        {
+            HitSFXSource.pitch = Random.Range(HitPitchMin, HitPitchMax);
+            HitSFXSource.Play();
         }
     }
 
